@@ -18,7 +18,7 @@ export async function POST(req: Request){
         }
 
         const body = await JSON.parse(rawBody);
-        console.log(body)
+        console.log(body.commits)
 
         return NextResponse.json({message: "Success"})
     }
