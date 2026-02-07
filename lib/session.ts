@@ -31,6 +31,7 @@ export const getSession = async ()=>{
     try{
         return await decrypt(session)
     }catch(e){
+        console.log("error "+ e)
         return null
     }
 }
