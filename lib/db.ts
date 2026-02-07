@@ -1,28 +1,28 @@
-import { Db, MongoClient } from "mongodb";
+import {Db  , MongoClient } from 'mongodb'
+
+interface GlobalWithMongo{
+    mongoClientPromise : Promise<MongoClient>
+}
 
 const uri = process.env.MONGODB_URI!
 
-interface GlobalWithMongo{
-    _mongoClientPromise? : Promise<MongoClient>
-}
+const globalWithMongo = global as typeof globalThis & GlobalWithMongo
 
-const globalWIthMongo = global as typeof globalThis & GlobalWithMongo
-
-let client : MongoClient
-let clientPromise : Promise<MongoClient>;
+let clientPromise : Promise<MongoClient> ;
+let client : MongoClient;
 
 if(process.env.NODE_ENV==="development"){
-    if(!globalWIthMongo._mongoClientPromise){
-        client = new MongoClient(uri);
-        globalWIthMongo._mongoClientPromise = client.connect();
+    if(!globalWithMongo.mongoClientPromise){
+        client = new MongoClient(uri)
+        globalWithMongo.mongoClientPromise = client.connect();
     }
-    clientPromise = globalWIthMongo._mongoClientPromise;
+    clientPromise = globalWithMongo.mongoClientPromise
 }else{
-    const client = new MongoClient(uri)
-    clientPromise = client.connect();
+    client = new MongoClient(uri);
+    clientPromise = client.connect()
 }
 
-export default async function connectDB():Promise<Db>{
-    const connectedClient = await clientPromise;
-    return connectedClient.db("messy_project_1");
+export async function connectDB() : Promise<Db>{
+    const connectedClient = await clientPromise
+    return connectedClient.db("messy-prac")
 }

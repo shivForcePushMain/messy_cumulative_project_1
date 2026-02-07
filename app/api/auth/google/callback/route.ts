@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/db";
+import {connectDB} from "@/lib/db";
 import { cookies } from "next/headers";
+import { encrypt } from "@/lib/session";
 
 export async function GET(req : Request){
     const {searchParams , origin} = new URL(req.url);
@@ -36,18 +37,21 @@ export async function GET(req : Request){
     const userObject = await userRes.json();
 
     const db = await connectDB();
-    const user = await db.collection("Users").updateOne({email : userObject.email } , {
+    await db.collection("Users").updateOne({email : userObject.email } , {
         $set :{
         name : userObject.name ,
-        refresh_token : tokenData.refresh_token
+        id_token : tokenData.id_token
     } 
 }, {upsert : true})
 
+    const sessionToken = await encrypt({email : userObject.email , name : userObject.name })
+
     const cookieStore = await cookies();
 
-    cookieStore.set("session-email" , userObject.email , {
+    cookieStore.set("messy-session" , sessionToken , {
         httpOnly: true ,
-        path: "/"
+        path: "/" ,
+        maxAge : 60*60
     })
 
     return NextResponse.redirect(`${origin}/`)

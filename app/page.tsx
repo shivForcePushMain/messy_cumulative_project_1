@@ -1,16 +1,14 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/session";
 
 export default async function Home() {
+  const user = await getSession();
 
-  const cookieStore = await cookies(); 
-  const userEmail = cookieStore.get("session-email")?.value
-
-  if(!userEmail) redirect('/login')
+  if(!user) redirect('/login')
 
   return (
     <div>
-      <h1>Hi {userEmail}</h1>
+      <h1>Hi {user.name}</h1>
     </div>
   );
 }
