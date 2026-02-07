@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 import crypto from 'crypto'
 
-export default async function POST(req: Request){
+export async function POST(req: Request){
     const db = await connectDB();
     const secret = process.env.GITHUB_WEBHOOK_SECRET!
     try{
@@ -19,7 +19,7 @@ export default async function POST(req: Request){
 
         const body = await req.json();
         console.log(body)
-        
+
         return NextResponse.json({message: "Success"})
     }
     catch(e){
