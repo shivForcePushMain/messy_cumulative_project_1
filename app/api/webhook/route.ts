@@ -17,7 +17,7 @@ export async function POST(req: Request){
             return NextResponse.json({status : 401 , message: "invalid sign webhook"})
         }
 
-        const body = await req.json();
+        const body = await JSON.parse(rawBody);
         console.log(body)
 
         return NextResponse.json({message: "Success"})
