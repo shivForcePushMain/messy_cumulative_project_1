@@ -18,7 +18,18 @@ export async function POST(req: Request){
         }
 
         const body = await JSON.parse(rawBody);
-        console.log(body.commits)
+        const commit = body.commits[0]
+        const commitObject = {
+            id : commit.id ,
+            message : commit.message ,
+            timestamp : commit.timestamp,
+            author : commit.author.name,
+            modified : commit.modified
+        }
+
+        console.log(commitObject)
+
+        await db.collection('Commits').insertOne(commitObject)
 
         return NextResponse.json({message: "Success"})
     }
